@@ -1,0 +1,14 @@
+-Get cross compiler [x]
+-Set up build System (meson) [x]
+-Set up automated Simulation / debugging with qemu []
+-Figure out correct compiler/ linker options []
+
+Code:
+-Establish Basic environment for C []
+-Set up print routine for debugging []
+-Set up IDT for Debugging/Page faults []
+-FAT 16 file System access []
+-Load and parse kernel (ELF?) []
+-Implement System to use BIOS services by switching back to Real Mode []
+-Gather Information from the BIOS []
+-Switch to long mode/kernel []
