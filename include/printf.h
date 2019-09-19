@@ -18,18 +18,14 @@
 
 
 
+#ifndef H_PRINTF
+#define H_PRINTF
+#include <stddef.h>
 
-SECTIONS{
-    . = 0x2200;
-    real_stack_top = .;
-    _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
-    _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
-    .mbr_block 0x7C00 : { *(.mbr_block) }
-}
+typedef void (*char_sink)(const char* data, size_t data_len);
+#define CSINK(p) (char_sink)(&(p))
+
+void printf(const char* fmt, ...);
+void fprintf(char_sink snk, const char* fmt, ...);
+
+#endif

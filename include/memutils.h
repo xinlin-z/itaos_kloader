@@ -18,18 +18,17 @@
 
 
 
+#ifndef H_MEMUTILS
+#define H_MEMUTILS
+#include <stddef.h>
+#include <stdint.h>
 
-SECTIONS{
-    . = 0x2200;
-    real_stack_top = .;
-    _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
-    _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
-    .mbr_block 0x7C00 : { *(.mbr_block) }
-}
+void *memmove(void* str1, const void* str2, size_t n);
+void *memset(void* str, int c, size_t n);
+size_t strlen(const char* str);
+char* strcpy(char* dst, const char* src);
+void* memcpy(void* str1, const void* str2, size_t n);
+char *strchr(const char *str, int c);
+size_t strspn(const char *str1, const char *str2);
+char* strncpy(char* dst, const char* src, size_t n);
+#endif

@@ -1,0 +1,1 @@
+option('EMBED_IMG_LBA', type : 'integer', value : 1, description : 'Specify the start address of the Embedded Code for the Bootloader in LBA format')

@@ -18,18 +18,50 @@
 
 
 
+//16-bit Entry Point for kloader
+#define ASSEMBLY_INCLUDE
+#include "gdt.h"
 
-SECTIONS{
-    . = 0x2200;
-    real_stack_top = .;
-    _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
-    _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
-    .mbr_block 0x7C00 : { *(.mbr_block) }
-}
+.section .text
+.code16
+
+.globl klstart
+
+
+klstart:
+    //Save boot drive number
+    pushl %edx
+    //Load GDT
+    lgdt (kload_gdt_desc)
+
+    //Enable Protected Mode
+    cli
+    movl %cr0,%eax
+    or $1,%eax
+    movl %eax,%cr0
+
+
+    jmp $GDT_SEL_CODE32,$p32mode_entry
+
+.code32
+p32mode_entry:
+    //Load data Selectors
+    movl $GDT_SEL_DATA32,%eax
+    movl %eax,%fs
+    movl %eax,%gs
+    movl %eax,%es
+    movl %eax,%ds
+    movl %eax,%ss
+
+    //Zero BSS
+    xorl %eax,%eax
+    movl $_bss_end,%ecx
+    subl $_bss_begin,%ecx
+    movl $_bss_begin,%edi
+    rep stosb
+
+    //Call C entry point kload_main
+    call kload_main
+
+    //halt
+    hlt

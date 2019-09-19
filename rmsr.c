@@ -18,18 +18,22 @@
 
 
 
+#include "rmsr.h"
+#include "idt.h"
+//Implementation in rmsr_impl.S
+extern void rmsr_int_impl(struct reg_state* st, uint8_t inum);
 
-SECTIONS{
-    . = 0x2200;
-    real_stack_top = .;
-    _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
-    _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
-    .mbr_block 0x7C00 : { *(.mbr_block) }
+//Calls a real mode interrupt
+
+void rmsr_int(struct reg_state* st, uint8_t inum)
+{
+    //We save the current IDT and load the one at 0x00
+    struct idt_desc old_idt;
+    struct idt_desc real_mode_idt = {0x3FF, 0x00};
+    sidt(&old_idt);
+    lidt(&real_mode_idt);
+
+    rmsr_int_impl(st, inum);
+
+    lidt(&old_idt);
 }

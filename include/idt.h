@@ -18,18 +18,23 @@
 
 
 
+#ifndef H_IDT
+#define H_IDT
+#include <stdint.h>
+//The IDT Descriptor passed to lidt
+struct idt_desc{
+    uint16_t  idt_len;
+    uint32_t  idt_start;
+} __attribute__((packed));
 
-SECTIONS{
-    . = 0x2200;
-    real_stack_top = .;
-    _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
-    _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
-    .mbr_block 0x7C00 : { *(.mbr_block) }
+static inline void lidt(struct idt_desc* p_idt)
+{
+    asm volatile ("lidt (%[pointer])" : : [pointer] "r" (p_idt) : "memory");
 }
+
+static inline void sidt(struct idt_desc* p_idt)
+{
+    asm volatile ("sidt (%[pointer])" : : [pointer] "r" (p_idt) : "memory");
+}
+
+#endif

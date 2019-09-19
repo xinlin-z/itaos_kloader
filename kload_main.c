@@ -18,18 +18,24 @@
 
 
 
+#include <stdint.h>
+#include "terminal_driver.h"
+#include "a20gate.h"
+#include "lowlevel.h"
+#include "rmsr.h"
+#include "printf.h"
 
-SECTIONS{
-    . = 0x2200;
-    real_stack_top = .;
-    _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
-    _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
-    .mbr_block 0x7C00 : { *(.mbr_block) }
+void kload_main(uint8_t boot_drive_num)
+{
+    terminal_clear();
+    printf("--ITAOS Kloader--\n");
+
+    if(!(check_enableA20())){
+        tputs("Failed to Enable A20 Gate...Halting\n");
+        halt_indef();
+    }
+    printf("A20 Enabled\n");
+    printf("Boot drive number is: %x\n", boot_drive_num);
+    printf("halting...\n");
+    halt_indef();
 }
