@@ -25,6 +25,7 @@
 #include "rmsr.h"
 #include "printf.h"
 
+
 void kload_main(uint8_t boot_drive_num)
 {
     terminal_clear();

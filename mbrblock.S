@@ -28,7 +28,7 @@
 #endif
 
 //"ax" Marks this section as executable/alloc and is important for objcopy
-.section .mbr_block, "ax"
+.section .mbr_block, "wax"
 .code16
 mbr_begin:
     //Set up a default state

@@ -17,19 +17,22 @@
 */
 
 
-
+ENTRY(klstart)
 
 SECTIONS{
     . = 0x2200;
     real_stack_top = .;
     _payload_begin = .;
-    .text : { *(.text) . = ALIGN(512); } =0x66
-    .data : AT(ADDR(.text)+SIZEOF(.text)) { *(.data) *(.rodata) . = ALIGN(512);} =0x77
+    .text : { *(.text) }
+    .data : { *(.data) *(.rodata) *(.rodata.*) }
     _payload_end = .;
-    _payload_size_sector = (_payload_end - _payload_begin) / 512;
-    _bss_begin = .;
-    .bss  : { *(.bss) }
-    _bss_end = .;
-    _free_mem_start = .;
+    _payload_size_sector = ((_payload_end - _payload_begin + 511) & ~(511)) / 512;
+    .bss  :
+    {
+        _bss_begin = .;
+        *(.bss)
+        _bss_end = .;
+    }
+    _free_mem_start = ALIGN(16);
     .mbr_block 0x7C00 : { *(.mbr_block) }
 }
