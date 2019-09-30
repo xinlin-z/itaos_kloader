@@ -39,7 +39,7 @@ mbr_begin:
     movw %ax,%ds
     movw %ax,%es
     movw %ax,%ss
-    movw $real_stack_top,%sp
+    movw $_stack_top,%sp
     //Save boot drive number
     movb %dl,(b_dl)
 
@@ -102,8 +102,3 @@ failed_lba_msg:
 early_msg:
     .ascii "EARLY\0"
 
-//Ensure size of 512-bytes
-.org 510
-//Make this sector bootable
-.byte 0x55
-.byte 0xAA

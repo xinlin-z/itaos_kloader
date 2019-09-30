@@ -29,6 +29,8 @@
 
 
 klstart:
+    //Reset stack
+    movl $_stack_top,%esp
     //Save boot drive number
     pushl %edx
     //Load GDT

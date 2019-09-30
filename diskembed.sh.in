@@ -1,7 +1,6 @@
 #!/bin/sh
 
-objcopy "${MESON_BUILD_ROOT}/kloader" -j .mbr_block -O binary "${MESON_BUILD_ROOT}/mbr.img"
-objcopy "${MESON_BUILD_ROOT}/kloader" -j .text -j .data -O binary "${MESON_BUILD_ROOT}/embed.img"
+#Ensure to keep Partition table intact
 dd if="${MESON_BUILD_ROOT}/mbr.img" of="${DESTDIR}/${MESON_INSTALL_PREFIX}" bs=1 count=440 conv=notrunc > /dev/null 2>&1
 dd if="${MESON_BUILD_ROOT}/mbr.img" of="${DESTDIR}/${MESON_INSTALL_PREFIX}" bs=1 seek=510 skip=510 conv=notrunc > /dev/null 2>&1
 dd if="${MESON_BUILD_ROOT}/embed.img" of="${DESTDIR}/${MESON_INSTALL_PREFIX}" bs=512 seek=@EMBED_IMG_LBA@ skip=0 conv=notrunc > /dev/null 2>&1

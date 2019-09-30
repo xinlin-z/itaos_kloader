@@ -21,7 +21,7 @@ ENTRY(klstart)
 
 SECTIONS{
     . = 0x2200;
-    real_stack_top = .;
+    _stack_top = .;
     _payload_begin = .;
     .text : { *(.text) }
     .data : { *(.data) *(.rodata) *(.rodata.*) }
@@ -34,5 +34,5 @@ SECTIONS{
         _bss_end = .;
     }
     _free_mem_start = ALIGN(16);
-    .mbr_block 0x7C00 : { *(.mbr_block) }
+    .mbr_block 0x7C00 : { *(.mbr_block) . = ALIGN(512) - 2; SHORT(0xAA55)}
 }

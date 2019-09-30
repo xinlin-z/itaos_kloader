@@ -22,7 +22,6 @@
 #include "gdt.h"
 
 //Call a real mode interrupt with a machine state passed by higher level code
-//TODO: Seperate Real/Proteceted Stacks
 
 .globl rmsr_int_impl
 rmsr_int_impl:
